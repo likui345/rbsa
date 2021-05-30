@@ -5,7 +5,7 @@
 
 
 import os
-from string import maketrans
+#from string import maketrans
 from collections import defaultdict
 import argparse
 import sys
@@ -14,7 +14,7 @@ import sys
 def nucmer_align(ref,scf):
     with open("nucmer.sh","w") as f:
         f.write('''
-        nucmer --mum -c 200 -l 100 {:s} {:s}  -p scf
+        nucmer --mum -c 2000 -l 1000 {:s} {:s}  -p scf
         delta-filter -i 80 -l 100 -1 scf.delta > scf.flt.delta
         show-coords -cdlqoTH scf.flt.delta > scf.flt.coords
         mummerplot --fat --large --png -p {:s} scf.flt.delta
@@ -184,7 +184,7 @@ def unplaced_scaf(scf):
 def reverse(seq):
     #Take the reverse complementary sequence of the sequence
     seq = ''.join(reversed(seq))
-    trans = maketrans('atcgATCG','tagcTAGC')
+    trans = str.maketrans('atcgATCG','tagcTAGC')
     return seq.translate(trans)
     
 
@@ -268,24 +268,24 @@ if __name__ == '__main__':
     parser.add_argument('--scf',type=str,help="This is the scaffold sequences ",required = True )
     parser.add_argument('--A_bed',type=str,help="species_a bed file")
     parser.add_argument('--B_bed',type=str,help="species_b bed file")
-    parser.add_argument('--anchor',type=str,help="anchor files of species_a and species_b")
+    parser.add_argument('--anchor',type=str,help="anchor.simple files of species_a and species_b")
     arg = vars(parser.parse_args())
     if arg["type"] == "nucmer":
-        #nucmer_align(arg["ref"],arg["scf"])
-        #anchor2pos()
-        #conflict_scaf()
-        #rm_marker()
-        #ordering_orientation()
-        #unplaced_scaf(arg["scf"])
-        #anchor(arg["scf"])
-        nucmer_align(arg["ref"],"Chr.ScafCut.fa")
+        nucmer_align(arg["ref"],arg["scf"])
+        anchor2pos()
+        conflict_scaf()
+        rm_marker()
+        ordering_orientation()
+        unplaced_scaf(arg["scf"])
+        anchor(arg["scf"])
+        #nucmer_align(arg["ref"],"Chr.ScafCut.fa")
     else:
-        #mcscan_anchor2pos(arg["A_bed"],arg["B_bed"],arg["anchor"])
-        #conflict_scaf()
-        #rm_marker()
-        #ordering_orientation()
-        #unplaced_scaf(arg["scf"])
-        #anchor(arg["scf"])
+        mcscan_anchor2pos(arg["A_bed"],arg["B_bed"],arg["anchor"])
+        conflict_scaf()
+        rm_marker()
+        ordering_orientation()
+        unplaced_scaf(arg["scf"])
+        anchor(arg["scf"])
         nucmer_align(arg["ref"],"Chr.ScafCut.fa")
         
 
